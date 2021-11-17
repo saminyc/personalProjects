@@ -1,0 +1,97 @@
+//Chowdhury Samin
+
+#include <iostream>
+using namespace std;
+
+void printResults(int q[]) {
+
+
+    for (int i = 0; i < 3; i++) {
+        cout << "Man: " << i << " and Woman: " << q[i] << endl;
+    }
+    cout << endl;
+
+}
+
+bool is_taken(int q[], int col) {
+    for (int i = 0; i < col; i++) {
+        if (q[i] == q[col])
+            return true;
+    }
+    return false;
+}
+
+bool ok(int q[], int col) {
+    int mp[3][3] = { {0,2,1},
+                   {0,2,1},
+                   {1,2,0} };
+
+    int wp[3][3] = { {2,1,0},
+                    {0,1,2},
+                    {2,0,1} };
+
+    //cm = a currently assigned man
+   //cw = a currently assigned woman
+   //nm = new man
+   //nw = new woman
+   //nm and nw are the proposed pair to add to the match
+
+    int cm, cw, nm, nw;
+    nm = col;//0
+    nw = q[col];//0
+
+
+
+
+    for (cm = 0; cm < col; cm++) {
+        cw = q[cm];
+        //Lower value implies a higher preference
+
+        //   a. if the current man prefers the new woman to his partner and
+        //   b. if the new woman prefers the current man to her partner, reject
+        if (mp[cm][nw] < mp[cm][cw] && wp[nw][cm] < wp[nw][nm])
+            return false;
+
+        //   c. if the new man prefers the current woman to his partner and
+        //   d. if the current woman prefers the new man to her partner, reject
+        if (mp[nm][cw] < mp[nm][nw] && wp[cw][nm] < wp[cw][cm])
+            return false;
+    }
+
+    return true; //since the pair nm & nw do not introduce an instability
+
+}
+
+int main()
+{
+
+    int q[3] = { 0 };
+    int newMan = 0;//col
+
+    while (newMan >= 0) {
+
+        //print if we have reached the last col
+        if (newMan >= 3) {
+            printResults(q);
+            newMan--;
+            q[newMan]++;
+        }
+        //if we have matched all women already
+         if (q[newMan] >= 3) {
+            q[newMan] = 0;
+            newMan--;
+            if (newMan != -1) {
+                q[newMan]++;
+            }
+        }
+        else if (!is_taken(q, newMan) && ok(q, newMan)) {//if condition is true
+            newMan++;//go to next col
+        }
+        else {
+            q[newMan]++;
+        }
+
+    }
+
+    return 0;
+}
